@@ -130,9 +130,7 @@ Created this 50x50 jpg with quality 90 image:
 
 ## Changelog ##
 
-### 0.9.0 ###
-
-  * Martin Bittner (nfuids): Initial public release
+See subversion changeset for changelog
 
 [original]: http://www.leonarddg.com/symfony/plugins/eCropPlugin/images/Leonard.png "Original Image"
 [sample1]: http://www.leonarddg.com/symfony/plugins/eCropPlugin/images/thumb-sample1.png "Simple Crop"
