@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.7.1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+ <name>eCropPlugin</name>
+ <channel>pear.symfony-project.com</channel>
+ <summary>eCropPlugin offers a mechanism to crop images.</summary>
+ <description>Uses GD library to crop images.</description>
+ <lead>
+  <name>Martin Bittner</name>
+  <user>nfuids</user>
+  <email>martin.bittner@leonarddg.com</email>
+  <active>yes</active>
+ </lead>
+ <date>2008-11-13</date>
+ <time>10:00:00</time>
+ <version>
+  <release>1.1.01</release>
+  <api>1.1.01</api>
+ </version>
+ <stability>
+  <release>stable</release>
+  <api>stable</api>
+ </stability>
+ <license uri="http://www.symfony-project.com/license">MIT license</license>
+ <notes>-</notes>
+ <contents>
+  <dir baseinstalldir="PEAR" name="/">
+   <file baseinstalldir="PEAR" name="lib/eCropPlugin.class.php" role="data" />
+   <file baseinstalldir="PEAR" name="LICENSE" role="data" />
+   <file baseinstalldir="PEAR" name="README" role="data" />
+  </dir>
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>5.0.0</min>
+   </php>
+   <pearinstaller>
+    <min>1.4.1</min>
+   </pearinstaller>
+   <package>
+    <name>symfony</name>
+    <channel>pear.symfony-project.com</channel>
+    <min>1.1.0</min>
+    <max>1.2.0</max>
+    <exclude>1.2.0</exclude>
+   </package>
+  </required>
+ </dependencies>
+ <phprelease />
+ <changelog>
+  <release>
+   <version>
+    <release>1.1.01</release>
+    <api>1.1.01</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <license uri="http://www.symfony-project.com/license">MIT license</license>
+   <license>MIT</license>
+   <date>2008-11-13</date>
+   <notes>* Martin Bittner: Initial public release</notes>
+  </release>
+ </changelog>
+</package>

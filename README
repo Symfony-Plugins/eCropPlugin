@@ -1,0 +1,142 @@
+# eCropPlugin plugin (for symfony 1.0.x, 1.1.x, 1.2.x) #
+
+The `eCropPlugin` is a symfony plugin that provides mechanism for croping images
+
+## Licence ##
+
+This plugin is licensed under the MIT license. For the full copyright and license information, 
+please view the LICENSE file that was distributed with this source code.
+
+## Introduction ##
+
+It supports GIF, PNG and JPG through the use of the GD library. You can
+save the thumbnail in a different type from the original image. You can
+save the cropped area in a different size. So for example, you could crop
+a 100x100 zone and save it as a 50x50 thumbnail.
+
+A nice way to use this plugin is to also use a javascript plugin to get
+the information you need to perform the crop. Here is a 
+[image crop jQuery plugin](http://deepliquid.com/content/Jcrop.html "image crop jQuery") 
+that does that and here is a [prototype image crop](http://www.webresourcesdepot.com/image-crop-ui-with-prototype/)
+plugin that also does that.
+
+I commented pretty much everything in the source code, so it should be easy to look at the code and understand everything.
+
+## Installation ##
+
+  * Install the plugin (symfony 1.0)
+
+	{{{
+     symfony plugin-install http://plugins.symfony-project.com/eCropPlugin
+	}}}
+
+  * Install the plugin (symfony 1.1, 1.2)
+
+	{{{
+     symfony plugin:install eCropPlugin
+	}}}
+
+  * Clear you cache
+	
+	{{{
+    symfony cc
+	}}}
+
+
+## Examples ##
+
+For the purpose of the demos, we used our logo ;) So the (x,y) coordinate of the upper-left 
+corner are (81, 47) and the width and height are both 97 pixels.
+
+Original Image:  
+![original image][original]
+
+### Sample 1: Simple Crop ###
+{{{
+<?php
+$c = new eCrop('Leonard.png', 81, 47, 97, 97);  
+$c->crop('thumb-sample1.png');  
+$c->freeAll();  
+}}}
+
+Created this 97x97 png image:  
+![Simple Crop Result][sample1]
+
+### Sample 2: Saving in a different format ###
+{{{
+<?php
+$c = new eCrop('Leonard.png', 81, 47, 97, 97);  
+$c->setThumbMime('image/gif');  
+$c->crop('thumb-sample2.gif');  
+$c->freeAll();  
+}}}
+
+Created this 97x97 gif image:  
+![Different Fromat Result][sample2]
+
+### Sample 3: Adjusting JPG Quality ###
+{{{
+<?php
+$c = new eCrop('Leonard.png', 81, 47, 97, 97);  
+$c->setThumbMime('image/jpeg');  
+$c->setJpgQuality(75);  
+$c->crop('thumb-sample3.jpg');  
+$c->freeAll();  
+}}}
+
+**Note1**: The default jpg quality is 80.  
+
+Created this 97x97 jpg image:  
+![JPG Quality Result][sample3]
+
+### Sample 4: Saving in a different size (smaller) ###
+{{{
+<?php
+$c = new eCrop('Leonard.png', 81, 47, 97, 97);  
+$c->setThumbSize(25, 25);  
+$c->crop('thumb-sample4.png');  
+$c->freeAll();  
+}}}
+
+**Note1**: There is also a setThumbWidth() and a setThumbHeight() method. setThumbSize() uses them internally.  
+**Note2**: There is also a setThumbSizeRelative($percentage). See phpDoc bloc inside code.  
+**Note3**: You may set the size of the thumbnail to a bigger size than the original although the thumbnail may not look so good.
+
+Created this 25x25 png image:  
+![Resized thumbnail][sample4]
+
+### Sample 5: Mixed options ###
+{{{
+<?php
+$c = new eCrop('Leonard.png', 81, 47, 97, 97);  
+$c->setThumbWidth(50);  
+$c->setThumbHeight(50);  
+$c->setThumbMime('image/jpeg');  
+$c->setJpgQuality(90);  
+$c->crop('thumb-sample5.jpg');  
+$c->freeAll();  
+}}}
+
+Created this 50x50 jpg with quality 90 image:  
+![mixed options thumbnail][sample5]
+
+## TODO ##
+
+  * Add a Widget using the jQuery plugin to provide a visual way of getting (x,y) coordinate and the width/height of the zone to crop
+  * See if a form Widget would be nice too
+  * Create unit test for the whole class
+  * Refactor it so it uses the Adapter pattern to support both GD and ImageMagik like sfThumbnailPlugin does
+  * Create a demo using the jQuery plugin
+
+## Changelog ##
+
+### 0.9.0 ###
+
+  * Martin Bittner (nfuids): Initial public release
+
+[original]: http://www.leonarddg.com/symfony/plugins/eCropPlugin/images/Leonard.png "Original Image"
+[sample1]: http://www.leonarddg.com/symfony/plugins/eCropPlugin/images/thumb-sample1.png "Simple Crop"
+[sample2]: http://www.leonarddg.com/symfony/plugins/eCropPlugin/images/thumb-sample2.gif "Saving in a different format"
+[sample3]: http://www.leonarddg.com/symfony/plugins/eCropPlugin/images/thumb-sample3.jpg "Adjusting JPG Quality"
+[sample4]: http://www.leonarddg.com/symfony/plugins/eCropPlugin/images/thumb-sample4.png "Saving in a different size"
+[sample5]: http://www.leonarddg.com/symfony/plugins/eCropPlugin/images/thumb-sample5.jpg "Using mixed options"
