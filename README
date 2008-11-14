@@ -112,6 +112,9 @@ $c->setJpgQuality(90);
 $c->crop('thumb-sample5.jpg');  
 }}}
 
+This produced this 50x50 jpg with quality 90  
+![Mixed Options][sample5]
+
 ### Sample 6: Largest Square Area ###
 The **cropLargestSquareArea($thumbDest, $whereToCropTall, $whereToCropWide, $free = true)** function will crop the largest possible square. 
 This is useful when you want to crop an image without user input. For example, say a user upload a profile picture and you want

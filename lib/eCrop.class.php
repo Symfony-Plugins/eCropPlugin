@@ -366,6 +366,8 @@ class eCrop
 	
 		if ($free)
 			$this->freeAll();
+		else
+			$this->freeThumb();
 		
 	}
 	
@@ -547,7 +549,7 @@ class eCrop
 	 * Set the mime type of the thumbnail.
 	 * 
 	 * Set the mime of the thumbnail. Must be one of the
-	 * allowed types. See $$imgTypes
+	 * allowed types. See $imgTypes
 	 *
 	 * @param string $mime
 	 */

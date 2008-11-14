@@ -10,11 +10,11 @@
   <email>martin.bittner@leonarddg.com</email>
   <active>yes</active>
  </lead>
- <date>2008-11-13</date>
+ <date>2008-11-14</date>
  <time>10:00:00</time>
  <version>
-  <release>1.1.01</release>
-  <api>1.1.01</api>
+  <release>1.0.06</release>
+  <api>1.0.06</api>
  </version>
  <stability>
   <release>stable</release>
@@ -24,7 +24,7 @@
  <notes>-</notes>
  <contents>
   <dir baseinstalldir="PEAR" name="/">
-   <file baseinstalldir="PEAR" name="lib/eCropPlugin.class.php" role="data" />
+   <file baseinstalldir="PEAR" name="lib/eCrop.class.php" role="data" />
    <file baseinstalldir="PEAR" name="LICENSE" role="data" />
    <file baseinstalldir="PEAR" name="README" role="data" />
   </dir>
@@ -40,9 +40,9 @@
    <package>
     <name>symfony</name>
     <channel>pear.symfony-project.com</channel>
-    <min>1.1.0</min>
-    <max>1.2.0</max>
-    <exclude>1.2.0</exclude>
+    <min>1.0.0</min>
+    <max>1.3.0</max>
+    <exclude>1.3.0</exclude>
    </package>
   </required>
  </dependencies>
@@ -50,8 +50,8 @@
  <changelog>
   <release>
    <version>
-    <release>1.1.01</release>
-    <api>1.1.01</api>
+    <release>1.0.06</release>
+    <api>1.0.06</api>
    </version>
    <stability>
     <release>stable</release>
@@ -59,8 +59,9 @@
    </stability>
    <license uri="http://www.symfony-project.com/license">MIT license</license>
    <license>MIT</license>
-   <date>2008-11-13</date>
-   <notes>* Martin Bittner: Initial public release</notes>
+   <date>2008-11-14</date>
+   <notes>* Martin Bittner: Added cropLargestSquareArea() method
+	* Martin Bittner: Added an optional $free parameter to the crop methods</notes>
   </release>
  </changelog>
 </package>
