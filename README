@@ -56,7 +56,6 @@ Original Image:
 <?php
 $c = new eCrop('Leonard.png', 81, 47, 97, 97);  
 $c->crop('thumb-sample1.png');  
-$c->freeAll();  
 }}}
 
 Created this 97x97 png image:  
@@ -67,8 +66,7 @@ Created this 97x97 png image:
 <?php
 $c = new eCrop('Leonard.png', 81, 47, 97, 97);  
 $c->setThumbMime('image/gif');  
-$c->crop('thumb-sample2.gif');  
-$c->freeAll();  
+$c->crop('thumb-sample2.gif');    
 }}}
 
 Created this 97x97 gif image:  
@@ -81,7 +79,6 @@ $c = new eCrop('Leonard.png', 81, 47, 97, 97);
 $c->setThumbMime('image/jpeg');  
 $c->setJpgQuality(75);  
 $c->crop('thumb-sample3.jpg');  
-$c->freeAll();  
 }}}
 
 **Note1**: The default jpg quality is 80.  
@@ -95,7 +92,6 @@ Created this 97x97 jpg image:
 $c = new eCrop('Leonard.png', 81, 47, 97, 97);  
 $c->setThumbSize(25, 25);  
 $c->crop('thumb-sample4.png');  
-$c->freeAll();  
 }}}
 
 **Note1**: There is also a setThumbWidth() and a setThumbHeight() method. setThumbSize() uses them internally.  
@@ -114,19 +110,56 @@ $c->setThumbHeight(50);
 $c->setThumbMime('image/jpeg');  
 $c->setJpgQuality(90);  
 $c->crop('thumb-sample5.jpg');  
-$c->freeAll();  
 }}}
 
-Created this 50x50 jpg with quality 90 image:  
-![mixed options thumbnail][sample5]
+### Sample 6: Largest Square Area ###
+The **cropLargestSquareArea($thumbDest, $whereToCropTall, $whereToCropWide, $free = true)** function will crop the largest possible square. 
+This is useful when you want to crop an image without user input. For example, say a user upload a profile picture and you want
+to create a thumbnail (like facebook). Using this function will do the trick!
+
+Using eCrop::CROP_TOP for $whereToCropTall and eCrop::CROP_CENTER for $whereToCropWide will normally give you a thumbnail with 
+face of the person on the picture.
+
+So if a picture is vertical (taller than wide), the square will be of width x width. If the picture is horizontal, the square 
+will be of height x height. The function **cropLargestSquareArea** also requires 2 parameters that determine where the crop 
+will occur. The second param will be taken into account if the picture is vertical and the thrid param will be used if the 
+picture is horizontal. 
+
+Use the following constants for the second param:  
+ * eCrop::CROP_TOP  
+ * eCrop::CROP_CENTER  
+ * eCrop::CROP_BOTTOM  
+
+Use the following constants for the third param:  
+ * eCrop::CROP_RIGHT  
+ * eCrop::CROP_CENTER  
+ * eCrop::CROP_LEFT  
+
+
+{{{
+<?php
+$c = new eCrop('Leonard.png');  
+$c->cropLargestSquareArea('thumb-sample6a.png', eCrop::CROP_CENTER, eCrop::CROP_CENTER, false);  
+$c->setThumbSize(75, 75);  
+$c->cropLargestSquareArea('thumb-sample6b.png', eCrop::CROP_CENTER, eCrop::CROP_CENTER);  
+}}}
+
+**Note1**: We introduced a new optional param to the crop* methods. The Crop methods now internally call freeAll() unless you set the 
+$free param to false. So set to false if you want to save multiple crop from the same source image.
+
+Created those 2 thumbnails:  
+![largest square area][sample6a] ![largest square area][sample6b]
+
+## Comments & Suggestions ##
+We would like to hear from people who use eCropPlugin. If you have comments or suggestions, you may contact the Lead developper.
 
 ## TODO ##
-
-  * Add a Widget using the jQuery plugin to provide a visual way of getting (x,y) coordinate and the width/height of the zone to crop
-  * See if a form Widget would be nice too
-  * Create unit test for the whole class
-  * Refactor it so it uses the Adapter pattern to support both GD and ImageMagik like sfThumbnailPlugin does
-  * Create a demo using the jQuery plugin
+In no particular order:  
+  * Add a Widget using the jQuery plugin to provide a visual way of getting (x,y) coordinate and the width/height of the zone to crop  
+  * See if a form Widget would be nice too  
+  * Create unit test for the whole class  
+  * Refactor it so it uses the Adapter pattern to support both GD and ImageMagik like sfThumbnailPlugin does  
+  * Create a demo using the jQuery plugin  
 
 ## Changelog ##
 
@@ -138,3 +171,5 @@ See subversion changeset for changelog
 [sample3]: http://www.leonarddg.com/symfony/plugins/eCropPlugin/images/thumb-sample3.jpg "Adjusting JPG Quality"
 [sample4]: http://www.leonarddg.com/symfony/plugins/eCropPlugin/images/thumb-sample4.png "Saving in a different size"
 [sample5]: http://www.leonarddg.com/symfony/plugins/eCropPlugin/images/thumb-sample5.jpg "Using mixed options"
+[sample6a]: http://www.leonarddg.com/symfony/plugins/eCropPlugin/images/thumb-sample6a.png "Largest Square Area"
+[sample6b]: http://www.leonarddg.com/symfony/plugins/eCropPlugin/images/thumb-sample6b.png "Largest Square Area"

@@ -20,19 +20,26 @@
  */
 class eCrop
 {
+
+	const CROP_CENTER = 1;
+	const CROP_TOP = 2;
+	const CROP_BOTTOM = 3;
+	const CROP_LEFT = 4;
+	const CROP_RIGHT = 5;
+	
 	/**
 	 * Width of the thumbnail
 	 *
 	 * @var unknown_type
 	 */
-	protected $thumbWidth;
+	protected $thumbWidth =  null;
 	
 	/**
 	 * Height of the thumbnail
 	 *
 	 * @var unknown_type
 	 */
-	protected $thumbHeight;
+	protected $thumbHeight = null;
 	
 	/**
 	 * Mime of the thumbnail
@@ -63,6 +70,20 @@ class eCrop
 	 * @var unknown_type
 	 */
 	protected $thumbY = 0;
+	
+	/**
+	 * Width of the source image
+	 *
+	 * @var unknown_type
+	 */
+	protected $sourceWidth;
+	
+	/**
+	 * Height of the source image
+	 *
+	 * @var unknown_type
+	 */
+	protected $sourceHeight;
 	
 	/**
 	 * The width of the section to crop
@@ -177,7 +198,7 @@ class eCrop
 	 * @param int $cropWidth		Wdith of the area to crop
 	 * @param int $cropHeight		Height of the area to crop
 	 */
-	public function __construct($sourceImage, $cropX, $cropY, $cropWidth, $cropHeight)
+	public function __construct($sourceImage, $cropX = 0, $cropY = 0, $cropWidth = 1, $cropHeight = 1)
 	{
 		$this->loadFile($sourceImage);
 		
@@ -185,16 +206,13 @@ class eCrop
 		$this->setCropY($cropY);
 		$this->setCropWidth($cropWidth);
 		$this->setCropHeight($cropHeight);
-		
-		// Default Values: Make the thumbnail size the same as the zone to crop
-		$this->setThumbWidth($cropWidth);
-		$this->setThumbHeight($cropHeight);
 	}
 	
 	/**
 	 * Loads an image from a file or URL and creates an internal thumbnail out of it
 	 *
-	 * @param string $image 	filename (with absolute path) of the image to load. If the filename is a http(s) URL, then an attempt to download the file will be made.
+	 * @param string $image 	filename (with absolute path) of the image to load. 
+	 *							If the filename is a http(s) URL, then an attempt to download the file will be made.
 	 *
 	 * @return boolean 		True if the image was properly loaded
 	 * @throws Exception 	If the image cannot be loaded, or if its mime type is not supported
@@ -246,43 +264,67 @@ class eCrop
 	}
 	
 	/**
-	 * Create GD Image Resources.
+	 * Create GD Image Resource from the source image.
+	 *
+	 */	
+	private function createSourceImageResource()
+	{
+		// Only do it once.
+		if (!is_resource($this->sourceImageResource))
+		{
+		  $imgData = @GetImageSize($this->sourceImage);
+
+		  if (!$imgData)
+		  {
+		    throw new Exception(sprintf('Could not load image %s', $image));
+		  }
+
+		  $this->sourceWidth = $imgData[0];
+		  $this->sourceHeight = $imgData[1];
+
+		  if (in_array($imgData['mime'], $this->imgTypes))
+		  {
+			$this->sourceMime = $imgData['mime'];	
+			
+		    $loader = $this->imgLoaders[$imgData['mime']];
+		    if(!function_exists($loader))
+		    {
+		      throw new Exception(sprintf('Function %s not available. Please enable the GD extension.', $loader));
+		    }
+
+		    $this->sourceImageResource = $loader($this->sourceImage);	
+			if (!$this->sourceImageResource)
+				throw new Exception(sprintf("Can't create source image ressource using '%s' function.", $loader));	
+		  } 
+		  else
+		  {
+			throw new Exception(sprintf('Image MIME type %s not supported', $imgData['mime']));
+		  }
+		}
+	}
+	
+	/**
+	 * Create GD Images Resources for the thumbnail.
+	 *
+	 */	
+	private function createThumbImageResource()
+	{
+		// Free the resource if already created
+		$this->freeThumb();
+			
+	    $this->thumbImageResource = imagecreatetruecolor($this->getThumbWidth(), $this->getThumbHeight());	
+		if (!$this->thumbImageResource)
+			throw new Exception("Can't create source image ressource using '%s' function.", $loader);		
+	}
+	
+	/**
+	 * Create GD Images Resources.
 	 *
 	 */
 	private function createImagesResources()
 	{
-	  $imgData = @GetImageSize($this->sourceImage);
-
-	  if (!$imgData)
-	  {
-	    throw new Exception(sprintf('Could not load image %s', $image));
-	  }
-
-	  if (in_array($imgData['mime'], $this->imgTypes))
-	  {
-	    $loader = $this->imgLoaders[$imgData['mime']];
-	    if(!function_exists($loader))
-	    {
-	      throw new Exception(sprintf('Function %s not available. Please enable the GD extension.', $loader));
-	    }
-		
-
-	    $this->sourceImageResource = $loader($this->sourceImage);	
-		if (!$this->sourceImageResource)
-			throw new Exception(sprintf("Can't create source image ressource using '%s' function.", $loader));
-			
-	    $this->sourceMime = $imgData['mime'];
-
-
-	    $this->thumbImageResource = imagecreatetruecolor($this->getThumbWidth(), $this->getThumbHeight());	
-		if (!$this->thumbImageResource)
-			throw new Exception("Can't create source image ressource using '%s' function.", $loader);
-			
-	  }
-	  else
-	  {
-	    throw new Exception(sprintf('Image MIME type %s not supported', $imgData['mime']));
-	  }		
+		$this->createSourceImageResource();
+		$this->createThumbImageResource();				
 	}
 		
 	/**
@@ -290,10 +332,10 @@ class eCrop
 	 *
 	 * @param string $thumbDest		path to the thumbnail file
 	 */	
-	public function crop($thumbDest)
+	public function crop($thumbDest, $free = true)
 	{
 		$this->createImagesResources();
-		
+
 		imagecopyresampled(
 			$this->thumbImageResource, 
 			$this->sourceImageResource, 
@@ -306,7 +348,7 @@ class eCrop
 			$this->getCropWidth(),
 			$this->getCropHeight()
 		);
-		
+
 	   $creator = $this->imgCreators[$this->getThumbMime()];
 	   if(!function_exists($creator))
 	   {
@@ -321,17 +363,85 @@ class eCrop
 	   {
 	     $creator($this->thumbImageResource, $thumbDest);
 	   }
+	
+		if ($free)
+			$this->freeAll();
 		
+	}
+	
+	/**
+	 * Crop the largest possible square of the source image.
+	 *
+	 * Will compute the largest possible square to crop. It also let you choose which
+	 * part will be cropped for a tall image, top, center, bottom or for a wide
+	 * image, it will let you choose from left, center, right.
+	 *
+	 * @throw Exception
+	 *
+	 * @param string $thumbDest			Path to the thumbnail
+	 * @param const $whereToCropTall	Where to crop if the image is vertical
+	 * @param const $whereToCropWide	Where to crop if the image is horizontal
+	 */
+	public function cropLargestSquareArea($thumbDest, $whereToCropTall, $whereToCropWide, $free = true)
+	{
+		// Get the dimensions of the source image loaded.
+		$this->createSourceImageResource();
+		
+		$size = ($this->sourceWidth < $this->sourceHeight) ? $this->sourceWidth : $this->sourceHeight;
+		$this->setCropSize($size, $size);
+		
+		$isTall = ($this->sourceWidth < $this->sourceHeight) ? true : false;
+		
+		if ($isTall)
+		{
+			// Calculate (x,y) coordinates
+			switch($whereToCropTall)
+			{
+				case self::CROP_TOP:
+					$this->setCropCoords(0, 0);					
+					break;
+				case self::CROP_BOTTOM:
+					$this->setCropCoords(0, $this->sourceHeight - $this->getCropHeight());
+					break;	
+				case self::CROP_CENTER:
+					$this->setCropCoords(0, (($this->sourceHeight - $this->getCropHeight()) /  2));
+					break;		
+				default:						
+					throw new Exception(sprintf("Param 'whereToCropTall' is invalid (%s).", $whereToCropTall));
+			}
+		} 
+		else 
+		{
+			// Calculate (x,y) coordinates
+			switch($whereToCropWide)
+			{
+				case self::CROP_LEFT:
+					$this->setCropCoords(0, 0);					
+					break;
+				case self::CROP_RIGHT:
+					$this->setCropCoords($this->sourceWidth - $this->getCropWidth(), 0);
+					break;	
+				case self::CROP_CENTER:
+					$this->setCropCoords((($this->sourceWidth - $this->getCropWidth()) / 2), 0);
+					break;		
+				default:
+					throw new Exception(sprintf("Param 'whereToCropWide' is invalid."));
+			}			
+		}		
+
+		$this->crop($thumbDest, $free);
 	}
 	
 	/**
 	 * Get the width of the thumbnail.
 	 *
+	 * Return the width of the thumbnail. If null, it will return the width of the crop zone.
+	 *
 	 * @return int	The width of the thumbnail.
 	 */
 	public function getThumbWidth()
 	{
-		return $this->thumbWidth;
+		return (!is_null($this->thumbWidth)) ? $this->thumbWidth : $this->getCropWidth();
 	}
 	
 	/**
@@ -354,11 +464,13 @@ class eCrop
 	/**
 	 * Get the height of the thumbnail.
 	 *
+	 * Return the height of the thumbnail. If null, it will return the height of the crop zone.
+	 *
 	 * @return int 	The height of the thumbnail.
 	 */	
 	public function getThumbHeight()
 	{
-		return $this->thumbHeight;
+		return (!is_null($this->thumbHeight)) ? $this->thumbHeight : $this->getCropHeight();
 	}
 	
 	/**
@@ -507,6 +619,18 @@ class eCrop
 	}
 		
 	/**
+	 * Set the width and the height of the crop zone.
+	 *
+	 * @param int $width		Width of the crop zone
+	 * @param int $height		Height of the crop zone
+	 */		
+	public function setCropSize($width, $height)
+	{
+		$this->setCropWidth($width);
+		$this->setCropHeight($height);
+	}
+	
+	/**
 	 * Get the width of the zone to crop.
 	 *
 	 * @return int	Width of the zone to crop.
@@ -562,6 +686,21 @@ class eCrop
 	public function getSourceMime()
 	{
 		return $this->sourceMime;
+	}
+	
+	/**
+	 * Set the coordinates of the upper left corner of the zone to crop.
+	 *
+	 * Set the coordinates of the upper left corner of the zone to crop from the source image.
+	 * 
+	 * @throw Exception
+	 * @param int $x	X coordinate.
+	 * @param int $y	Y coordinate.	
+	 */	
+	public function setCropCoords($x, $y)
+	{
+		$this->setCropX($x);
+		$this->setCropY($y);
 	}
 	
 	/**
