@@ -129,14 +129,14 @@ will occur. The second param will be taken into account if the picture is vertic
 picture is horizontal. 
 
 Use the following constants for the $whereToCropTall param:  
- * eCrop::CROP_TOP  
- * eCrop::CROP_CENTER  
- * eCrop::CROP_BOTTOM  
+  * eCrop::CROP_TOP  
+  * eCrop::CROP_CENTER  
+  * eCrop::CROP_BOTTOM  
 
 Use the following constants for the $whereToCropWide param:  
- * eCrop::CROP_RIGHT  
- * eCrop::CROP_CENTER  
- * eCrop::CROP_LEFT  
+  * eCrop::CROP_RIGHT  
+  * eCrop::CROP_CENTER  
+  * eCrop::CROP_LEFT  
 
 
 {{{

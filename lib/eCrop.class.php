@@ -331,6 +331,7 @@ class eCrop
 	 * Crop the image and save it.
 	 *
 	 * @param string $thumbDest		path to the thumbnail file
+	 * @param boolean $free			flag to free all resource after the croping took place
 	 */	
 	public function crop($thumbDest, $free = true)
 	{
