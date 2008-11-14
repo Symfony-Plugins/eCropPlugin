@@ -125,12 +125,12 @@ will be of height x height. The function **cropLargestSquareArea** also requires
 will occur. The second param will be taken into account if the picture is vertical and the thrid param will be used if the 
 picture is horizontal. 
 
-Use the following constants for the second param:  
+Use the following constants for the $whereToCropTall param:  
  * eCrop::CROP_TOP  
  * eCrop::CROP_CENTER  
  * eCrop::CROP_BOTTOM  
 
-Use the following constants for the third param:  
+Use the following constants for the $whereToCropWide param:  
  * eCrop::CROP_RIGHT  
  * eCrop::CROP_CENTER  
  * eCrop::CROP_LEFT  
