@@ -387,15 +387,51 @@ class eCrop
 	 */
 	public function cropLargestSquareArea($thumbDest, $whereToCropTall, $whereToCropWide, $free = true)
 	{
+		$this->cropLargestPossibleArea($thumbDest, $whereToCropTall, $whereToCropWide, 1, $free);
+	}
+
+	/**
+	 * Crop the largest possible square of the source image.
+	 *
+	 * Will compute the largest possible square to crop. It also let you choose which
+	 * part will be cropped for a tall image, top, center, bottom or for a wide
+	 * image, it will let you choose from left, center, right.
+	 *
+	 * @throw Exception
+	 *
+	 * @param string $thumbDest			Path to the thumbnail
+	 * @param const $whereToCropTall	Where to crop if the image is vertical
+	 * @param const $whereToCropWide	Where to crop if the image is horizontal
+	 * @param int $ratio				Ratio (width / height) of area to crop. 1 crops a square.
+	 */
+	public function cropLargestPossibleArea($thumbDest, $whereToCropTall, $whereToCropWide, $ratio = 1, $free = true)
+	{
 		// Get the dimensions of the source image loaded.
 		$this->createSourceImageResource();
 		
-		$size = ($this->sourceWidth < $this->sourceHeight) ? $this->sourceWidth : $this->sourceHeight;
-		$this->setCropSize($size, $size);
+		// Determine if the original picture is vertical (tall) or horizontal (not tall)
+		$isSourceTall = ($this->sourceWidth < $this->sourceHeight) ? true : false;	
 		
-		$isTall = ($this->sourceWidth < $this->sourceHeight) ? true : false;
+		// Determine the width and height of the crop
+		if ($ratio == 1) // It's a square
+		{
+			$cropWidth = $cropHeight = ($this->sourceWidth < $this->sourceHeight) ? $this->sourceWidth : $this->sourceHeight;					
+		} 
+		elseif ($ratio > 1) // is a horizontal crop
+		{
+			$cropWidth = $this->sourceWidth;
+			$cropHeight = $this->sourceWidth / $ratio;
+		}
+		else // is a vertical crop
+		{
+			$cropHeight = $this->sourceHeight;
+			$cropWidth = $this->sourceHeight * $ratio;
+		}
+
+		// Set the calculated crop size
+		$this->setCropSize($cropWidth, $cropHeight);
 		
-		if ($isTall)
+		if ($isSourceTall)
 		{
 			// Calculate (x,y) coordinates
 			switch($whereToCropTall)
@@ -432,9 +468,9 @@ class eCrop
 			}			
 		}		
 
-		$this->crop($thumbDest, $free);
+		$this->crop($thumbDest, $free);		
 	}
-	
+
 	/**
 	 * Get the width of the thumbnail.
 	 *
